@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Pokémon</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .pokemon-card {
+            background-color: #f8d030;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-center mb-4">Listado de Pokémon</h1>
+
+    <div class="row" id="pokemonList">
+        <!-- Aquí se mostrarán los Pokémon -->
+    </div>
+
+</div>
+
+<script>
+    // Función para cargar la lista de Pokémon desde la API al cargar la página Mas de 1000 pokemones agrega el numero en la URL
+    window.onload = function() {
+        fetch('https://pokeapi.co/api/v2/pokemon?limit=50')
+            .then(response => response.json())
+            .then(data => {
+                const pokemones = data.results;
+                const pokemonListDiv = document.getElementById('pokemonList');
+                pokemones.forEach(pokemon => {
+                    fetch(pokemon.url)
+                        .then(response => response.json())
+                        .then(pokemonData => {
+                            const pokemonHTML = `
+                                <div class="col-md-3">
+                                    <div class="pokemon-card">
+                                        <h2 class="text-center">${pokemonData.name.toUpperCase()}</h2>
+                                        <img src="${pokemonData.sprites.front_default}" alt="${pokemonData.name}" class="mx-auto d-block mb-3">
+                                        <p><strong>Tipo:</strong> ${pokemonData.types[0].type.name.toUpperCase()}</p>
+                                        <p><strong>Altura:</strong> ${pokemonData.height} dm</p>
+                                        <p><strong>Peso:</strong> ${pokemonData.weight} hectogramos</p>
+                                    </div>
+                                </div>
+                            `;
+                            pokemonListDiv.innerHTML += pokemonHTML;
+                        });
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    };
+</script>
+
+</body>
+</html>
